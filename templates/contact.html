@@ -1,0 +1,18 @@
+<!-- templates/contact.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us - Blood Bank</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Contact Us</h1>
+    <p>If you need blood or want to reach out to us, please call or email us:</p>
+    <ul>
+        <li><strong>Phone:</strong> +91 1234567890</li>
+        <li><strong>Email:</strong> contact@bloodbank.org</li>
+    </ul>
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>

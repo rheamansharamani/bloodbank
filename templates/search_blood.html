@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Blood - Blood Bank System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+        <div class="container">
+            <a class="navbar-brand" href="/">Blood Bank System</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/inventory">Inventory</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/search_blood">Search Blood</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">Search Blood by Type</h4>
+                    </div>
+                    <div class="card-body">
+                        <form action="/search_blood" method="post" class="row g-3">
+                            <div class="col-md-4">
+                                <label for="blood_type" class="form-label">Blood Type</label>
+                                <select class="form-select" id="blood_type" name="blood_type" required>
+                                    <option value="A+" {% if blood_type == 'A+' %}selected{% endif %}>A+</option>
+                                    <option value="A-" {% if blood_type == 'A-' %}selected{% endif %}>A-</option>
+                                    <option value="B+" {% if blood_type == 'B+' %}selected{% endif %}>B+</option>
+                                    <option value="B-" {% if blood_type == 'B-' %}selected{% endif %}>B-</option>
+                                    <option value="AB+" {% if blood_type == 'AB+' %}selected{% endif %}>AB+</option>
+                                    <option value="AB-" {% if blood_type == 'AB-' %}selected{% endif %}>AB-</option>
+                                    <option value="O+" {% if blood_type == 'O+' %}selected{% endif %}>O+</option>
+                                    <option value="O-" {% if blood_type == 'O-' %}selected{% endif %}>O-</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-danger">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                {% if inventory %}
+                    <div class="card mt-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Available {{ blood_type }} Blood</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Quantity (ml)</th>
+                                        <th>Donation ID</th>
+                                        <th>Expiry Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in inventory %}
+                                        <tr>
+                                            <td>{{ item.id }}</td>
+                                            <td>{{ item.quantity }}</td>
+                                            <td>{{ item.donation_id }}</td>
+                                            <td>{{ item.expiry_date.strftime('%Y-%m-%d') }}</td>
+                                            <td>
+                                                <form action="/use_blood/{{ item.id }}" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Mark as Used</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-4">
+                        <h5>Blood Type Compatibility Chart</h5>
+                        <table class="table table-bordered mt-2">
+                            <thead>
+                                <tr>
+                                    <th>Blood Type</th>
+                                    <th>Can Donate To</th>
+                                    <th>Can Receive From</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A+</td>
+                                    <td>A+, AB+</td>
+                                    <td>A+, A-, O+, O-</td>
+                                </tr>
+                                <tr>
+                                    <td>A-</td>
+                                    <td>A+, A-, AB+, AB-</td>
+                                    <td>A-, O-</td>
+                                </tr>
+                                <tr>
+                                    <td>B+</td>
+                                    <td>B+, AB+</td>
+                                    <td>B+, B-, O+, O-</td>
+                                </tr>
+                                <tr>
+                                    <td>B-</td>
+                                    <td>B+, B-, AB+, AB-</td>
+                                    <td>B-, O-</td>
+                                </tr>
+                                <tr>
+                                    <td>AB+</td>
+                                    <td>AB+</td>
+                                    <td>All blood types</td>
+                                </tr>
+                                <tr>
+                                    <td>AB-</td>
+                                    <td>AB+, AB-</td>
+                                    <td>A-, B-, AB-, O-</td>
+                                </tr>
+                                <tr>
+                                    <td>O+</td>
+                                    <td>A+, B+, AB+, O+</td>
+                                    <td>O+, O-</td>
+                                </tr>
+                                <tr>
+                                    <td>O-</td>
+                                    <td>All blood types</td>
+                                    <td>O-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    {% if blood_type %}
+                        <div class="alert alert-warning mt-4">
+                            <h5>No units of {{ blood_type }} blood are currently available</h5>
+                            <p>Please check back later or contact the blood bank administrator.</p>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Compatible Blood Types for {{ blood_type }}</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>If {{ blood_type }} is not available, the following blood types are compatible:</p>
+                                <ul>
+                                    {% if blood_type == 'A+' %}
+                                        <li>A-</li>
+                                        <li>O+</li>
+                                        <li>O-</li>
+                                    {% elif blood_type == 'A-' %}
+                                        <li>O-</li>
+                                    {% elif blood_type == 'B+' %}
+                                        <li>B-</li>
+                                        <li>O+</li>
+                                        <li>O-</li>
+                                    {% elif blood_type == 'B-' %}
+                                        <li>O-</li>
+                                    {% elif blood_type == 'AB+' %}
+                                        <li>A+</li>
+                                        <li>A-</li>
+                                        <li>B+</li>
+                                        <li>B-</li>
+                                        <li>AB-</li>
+                                        <li>O+</li>
+                                        <li>O-</li>
+                                    {% elif blood_type == 'AB-' %}
+                                        <li>A-</li>
+                                        <li>B-</li>
+                                        <li>O-</li>
+                                    {% elif blood_type == 'O+' %}
+                                        <li>O-</li>
+                                    {% elif blood_type == 'O-' %}
+                                        <li>None - O- can only receive O-</li>
+                                    {% endif %}
+                                </ul>
+                                <a href="/search_blood" class="btn btn-outline-danger mt-3">Search Other Blood Types</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                
+                <div class="mt-4">
+                    <h4>Request Blood</h4>
+                    <div class="card">
+                        <div class="card-body">
+                            <form action="/request_blood" method="post" class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="req_blood_type" class="form-label">Blood Type Needed</label>
+                                    <select class="form-select" id="req_blood_type" name="req_blood_type" required>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="quantity" class="form-label">Quantity (ml)</label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity" min="100" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="urgency" class="form-label">Urgency Level</label>
+                                    <select class="form-select" id="urgency" name="urgency" required>
+                                        <option value="normal">Normal</option>
+                                        <option value="urgent">Urgent</option>
+                                        <option value="critical">Critical</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="patient_name" class="form-label">Patient Name</label>
+                                    <input type="text" class="form-control" id="patient_name" name="patient_name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="hospital" class="form-label">Hospital/Clinic</label>
+                                    <input type="text" class="form-control" id="hospital" name="hospital" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="notes" class="form-label">Additional Notes</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-danger mt-3">Submit Request</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>© 2025 Blood Bank Management System</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

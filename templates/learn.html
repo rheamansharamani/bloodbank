@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blood Types & Compatibility</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Blood Types & Compatibility</h1>
+    <p>Blood is classified into different types based on the presence or absence of certain antigens. The main blood groups are A, B, AB, and O, and each can be either Rh-positive (+) or Rh-negative (−).</p>
+
+    <h2>🧬 Blood Type Chart</h2>
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Blood Type</th>
+                <th>Can Donate To</th>
+                <th>Can Receive From</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>O−</td>
+                <td>All types (Universal Donor)</td>
+                <td>O−</td>
+            </tr>
+            <tr>
+                <td>O+</td>
+                <td>O+, A+, B+, AB+</td>
+                <td>O+, O−</td>
+            </tr>
+            <tr>
+                <td>A−</td>
+                <td>A−, A+, AB−, AB+</td>
+                <td>A−, O−</td>
+            </tr>
+            <tr>
+                <td>A+</td>
+                <td>A+, AB+</td>
+                <td>A+, A−, O+, O−</td>
+            </tr>
+            <tr>
+                <td>B−</td>
+                <td>B−, B+, AB−, AB+</td>
+                <td>B−, O−</td>
+            </tr>
+            <tr>
+                <td>B+</td>
+                <td>B+, AB+</td>
+                <td>B+, B−, O+, O−</td>
+            </tr>
+            <tr>
+                <td>AB−</td>
+                <td>AB−, AB+</td>
+                <td>AB−, A−, B−, O−</td>
+            </tr>
+            <tr>
+                <td>AB+</td>
+                <td>AB+</td>
+                <td>All types (Universal Recipient)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>💡 Fun Facts</h2>
+    <ul>
+        <li>Only 7% of the population has O− blood, but it's the most needed for emergencies.</li>
+        <li>AB+ is the rarest blood type, found in less than 4% of people.</li>
+        <li>Knowing your blood type is important in case of surgeries, transfusions, or emergencies.</li>
+    </ul>
+
+    <p><a href="{{ url_for('index') }}">← Back to Home</a></p>
+</body>
+</html>
